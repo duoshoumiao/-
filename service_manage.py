@@ -109,8 +109,8 @@ async def enable_temporarily(session: CommandSession):
     
     group_id = session.ctx['group_id']
     u_priv = priv.get_user_priv(session.ctx)
-    if u_priv < priv.SUPERUSER:
-        await session.send(f'⚠️ 权限不足！需要：{priv.SUPERUSER}，您的：{u_priv}\n{PRIV_TIP}', at_sender=True)
+    if u_priv < priv.ADMIN:
+        await session.send(f'⚠️ 权限不足！需要：{priv.ADMIN}，您的：{u_priv}\n{PRIV_TIP}', at_sender=True)
         return
     
     # 启用所有服务
@@ -168,7 +168,7 @@ async def lssv(session: CommandSession):
     
     verbose_all = args.all
     only_hidden = args.hidden
-    if session.ctx['user_id'] in session.bot.config.SUPERUSERS:
+    if session.ctx['user_id'] in session.bot.config.ADMINS:
         gid = args.group or session.ctx.get('group_id')
         if not gid:
             session.finish('Usage: -g|--group <group_id> [-a|--all]')
@@ -228,7 +228,7 @@ async def switch_service(session: CommandSession, turn_on: bool):
             if name in svs:
                 sv = svs[name]
                 u_priv = priv.get_user_priv(session.ctx)
-                if u_priv >= priv.SUPERUSER:
+                if u_priv >= priv.ADMIN:
                     sv.set_enable(group_id) if turn_on else sv.set_disable(group_id)
                     results['success'].append(name)
                 else:
@@ -245,7 +245,7 @@ async def switch_service(session: CommandSession, turn_on: bool):
         await session.send('\n'.join(msg))
     
     else:  # 私聊模式
-        if session.ctx['user_id'] not in session.bot.config.SUPERUSERS:
+        if session.ctx['user_id'] not in session.bot.config.ADMINS:
             return
             
         if not service_names:
@@ -303,8 +303,8 @@ async def switch_all_services(session: CommandSession, turn_on: bool):
             
         group_id = session.ctx['group_id']
         u_priv = priv.get_user_priv(session.ctx)
-        if u_priv < priv.SUPERUSER:
-            await session.send(f'⚠️ 权限不足！{action_tip}所有功能需要：{priv.SUPERUSER}，您的：{u_priv}\n{PRIV_TIP}', at_sender=True)
+        if u_priv < priv.ADMIN:
+            await session.send(f'⚠️ 权限不足！{action_tip}所有功能需要：{priv.ADMIN}，您的：{u_priv}\n{PRIV_TIP}', at_sender=True)
             return
         
         svs = Service.get_loaded_services()
@@ -319,7 +319,7 @@ async def switch_all_services(session: CommandSession, turn_on: bool):
         await session.send(f"✅ 已{action_tip}所有功能（共 {len(sv_names)} 个服务）", at_sender=True)
     
     else:  # 私聊模式
-        if session.ctx['user_id'] not in session.bot.config.SUPERUSERS:
+        if session.ctx['user_id'] not in session.bot.config.ADMINS:
             return
             
         if all_groups:
@@ -367,8 +367,8 @@ async def enable_except_services(session: CommandSession):
         
         group_id = session.ctx['group_id']
         u_priv = priv.get_user_priv(session.ctx)
-        if u_priv < priv.SUPERUSER:
-            await session.send(f'⚠️ 权限不足！需要：{priv.SUPERUSER}，您的：{u_priv}\n{PRIV_TIP}', at_sender=True)
+        if u_priv < priv.ADMIN:
+            await session.send(f'⚠️ 权限不足！需要：{priv.ADMIN}，您的：{u_priv}\n{PRIV_TIP}', at_sender=True)
             return
             
         svs = Service.get_loaded_services()
@@ -389,7 +389,7 @@ async def enable_except_services(session: CommandSession):
         await session.send('\n'.join(msg), at_sender=True)
     
     else:  # 私聊模式
-        if session.ctx['user_id'] not in session.bot.config.SUPERUSERS:
+        if session.ctx['user_id'] not in session.bot.config.ADMINS:
             return
             
         if not except_names:
